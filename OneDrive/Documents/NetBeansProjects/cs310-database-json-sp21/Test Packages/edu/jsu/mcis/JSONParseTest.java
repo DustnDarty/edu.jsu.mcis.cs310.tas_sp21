@@ -5,19 +5,19 @@ import static org.junit.Assert.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
-import databasetest.*;
+import edu.jsu.mcis.*;  //import databasetest.*;
 
 public class JSONParseTest {
     
     private JSONParser parser;
     private JSONArray jsonDataOriginal;
     
-    DatabaseTest dbTest;
+    Cs310DatabaseJsonSp21 dbTest;
 
     @Before
     public void setUp() {
         
-        dbTest = new DatabaseTest();
+        dbTest = new Cs310DatabaseJsonSp21();          //DatabaseTest();
         
         // Prepare JSON Data
         
