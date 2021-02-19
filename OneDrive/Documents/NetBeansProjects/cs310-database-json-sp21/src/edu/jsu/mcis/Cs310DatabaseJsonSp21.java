@@ -4,20 +4,19 @@ package edu.jsu.mcis;
 import java.sql.*;
 import java.io.*;
 import java.util.*;
-//import com.opencsv.*;
-//import org.json.simple.*;
-//import org.json.simple.parser.*;
+import org.json.simple.*;
+import org.json.simple.parser.*;
 
 public class Cs310DatabaseJsonSp21 {
 
-    public static void main(String[] args) {
-         Connection conn = null;
+    public static JSONArray getJSONData() {
+        Connection conn = null;
         PreparedStatement pstSelect = null, pstUpdate = null;
         ResultSet resultset = null;
         ResultSetMetaData metadata = null;
         
         String query, key, value;
-        String newFirstName = "Alfred", newLastName = "Neuman";
+        //String newFirstName = "Alfred", newLastName = "Neuman";
         
         boolean hasresults;
         int resultCount, columnCount, updateCount = 0;
@@ -26,6 +25,9 @@ public class Cs310DatabaseJsonSp21 {
             
             /* Identify the Server */
             
+            JSONObject json = new JSONObject();
+            JSONArray record = new JSONArray();
+                    
             String server = ("jdbc:mysql://localhost/p2_test");
             String username = "root";
             String password = "CS488";
@@ -38,7 +40,7 @@ public class Cs310DatabaseJsonSp21 {
             /* Open Connection */
 
             conn = DriverManager.getConnection(server, username, password);
-
+            
             /* Test Connection */
             
             if (conn.isValid(0)) {
@@ -49,29 +51,29 @@ public class Cs310DatabaseJsonSp21 {
                 
                 // Prepare Update Query
                 
-                query = "INSERT INTO people (firstname, lastname) VALUES (?, ?)";
-                pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                pstUpdate.setString(1, newFirstName);
-                pstUpdate.setString(2, newLastName);
+                //query = "INSERT INTO people (firstname, lastname) VALUES (?, ?)";
+                //pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                //pstUpdate.setString(1, newFirstName);
+                //pstUpdate.setString(2, newLastName);
                 
                 // Execute Update Query
                 
-                updateCount = pstUpdate.executeUpdate();
+                //updateCount = pstUpdate.executeUpdate();
                 
                 // Get New Key; Print To Console
                 
-                if (updateCount > 0) {
+                //if (updateCount > 0) {
             
-                    resultset = pstUpdate.getGeneratedKeys();
+                //    resultset = pstUpdate.getGeneratedKeys();
 
-                    if (resultset.next()) {
+                //    if (resultset.next()) {
 
-                        System.out.print("Update Successful!  New Key: ");
-                        System.out.println(resultset.getInt(1));
+                //        System.out.print("Update Successful!  New Key: ");
+                //        System.out.println(resultset.getInt(1));
 
-                    }
+                //    }
 
-                }
+                //}
                 
                 
                 /* Prepare Select Query */
@@ -105,7 +107,7 @@ public class Cs310DatabaseJsonSp21 {
 
                             key = metadata.getColumnLabel(i);
 
-                            System.out.format("%20s", key);
+                            //System.out.format("%20s", key);
 
                         }
                         
@@ -115,12 +117,12 @@ public class Cs310DatabaseJsonSp21 {
                             
                             /* Begin Next ResultSet Row */
 
-                            System.out.println();
+                            //System.out.println();
                             
-                            /* Loop Through ResultSet Columns; Print Values */
+                            /* Loop Through ResultSet Columns;  */
 
                             for (int i = 1; i <= columnCount; i++) {
-
+                                
                                 value = resultset.getString(i);
 
                                 if (resultset.wasNull()) {
@@ -176,7 +178,20 @@ public class Cs310DatabaseJsonSp21 {
             if (pstSelect != null) { try { pstSelect.close(); pstSelect = null; } catch (Exception e) {} }
             
             if (pstUpdate != null) { try { pstUpdate.close(); pstUpdate = null; } catch (Exception e) {} }
-        }    
+        } 
+        return null; /// fix later
     }
     
+    public static void main(String[] args) {
+        
+                // Convert DataBase to JSON; 
+        
+        System.out.println("CONVERSION RESULTS (DataBase to JSON)");
+        System.out.println("================================");
+
+        //String json = Converter.csvToJson(csvFileString);
+        JSONArray json = getJSONData();
+        System.out.println(json);
+        
+    }
 }
