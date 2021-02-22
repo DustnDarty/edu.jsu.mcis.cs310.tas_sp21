@@ -2,10 +2,7 @@
 package edu.jsu.mcis;
 
 import java.sql.*;
-import java.io.*;
-import java.util.*;
 import org.json.simple.*;
-import org.json.simple.parser.*;
 
 public class Cs310DatabaseJsonSp21 {
 
@@ -16,17 +13,16 @@ public class Cs310DatabaseJsonSp21 {
         ResultSetMetaData metadata = null;
         
         String query, key, value;
-        //String newFirstName = "Alfred", newLastName = "Neuman";
+        JSONArray record = new JSONArray();
         
         boolean hasresults;
-        int resultCount, columnCount, updateCount = 0;
+        int resultCount, columnCount;
         
         try {
             
             /* Identify the Server */
             
-            JSONObject json = new JSONObject();
-            JSONArray record = new JSONArray();
+            //JSONArray record = new JSONArray();
                     
             String server = ("jdbc:mysql://localhost/p2_test");
             String username = "root";
@@ -48,33 +44,6 @@ public class Cs310DatabaseJsonSp21 {
                 /* Connection Open! */
                 
                 System.out.println("Connected Successfully!");
-                
-                // Prepare Update Query
-                
-                //query = "INSERT INTO people (firstname, lastname) VALUES (?, ?)";
-                //pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                //pstUpdate.setString(1, newFirstName);
-                //pstUpdate.setString(2, newLastName);
-                
-                // Execute Update Query
-                
-                //updateCount = pstUpdate.executeUpdate();
-                
-                // Get New Key; Print To Console
-                
-                //if (updateCount > 0) {
-            
-                //    resultset = pstUpdate.getGeneratedKeys();
-
-                //    if (resultset.next()) {
-
-                //        System.out.print("Update Successful!  New Key: ");
-                //        System.out.println(resultset.getInt(1));
-
-                //    }
-
-                //}
-                
                 
                 /* Prepare Select Query */
                 
@@ -101,42 +70,16 @@ public class Cs310DatabaseJsonSp21 {
                         metadata = resultset.getMetaData();
                         columnCount = metadata.getColumnCount();
                         
-                        /* Get Column Names; Print as Table Header */
-                        
-                        for (int i = 1; i <= columnCount; i++) {
-
-                            key = metadata.getColumnLabel(i);
-
-                            //System.out.format("%20s", key);
-
-                        }
-                        
-                        /* Get Data; Print as Table Rows */
-                        
                         while(resultset.next()) {
-                            
-                            /* Begin Next ResultSet Row */
-
-                            //System.out.println();
+                            JSONObject json = new JSONObject();
                             
                             /* Loop Through ResultSet Columns;  */
 
-                            for (int i = 1; i <= columnCount; i++) {
-                                
-                                value = resultset.getString(i);
-
-                                if (resultset.wasNull()) {
-                                    System.out.format("%20s", "NULL");
-                                }
-
-                                else {
-                                    System.out.format("%20s", value);
-                                }
-
+                            for (int i = 2; i <= columnCount; i++) {                                
+                                json.put(metadata.getColumnLabel(i),resultset.getString(i));
                             }
-
+                            record.add(json);
                         }
-                        
                     }
 
                     else {
@@ -157,12 +100,9 @@ public class Cs310DatabaseJsonSp21 {
                 
             }
             
-            System.out.println();
-            
             /* Close Database Connection */
             
             conn.close();
-            
         }
         
         catch (Exception e) {
@@ -177,21 +117,8 @@ public class Cs310DatabaseJsonSp21 {
             
             if (pstSelect != null) { try { pstSelect.close(); pstSelect = null; } catch (Exception e) {} }
             
-            if (pstUpdate != null) { try { pstUpdate.close(); pstUpdate = null; } catch (Exception e) {} }
-        } 
-        return null; /// fix later
-    }
-    
-    public static void main(String[] args) {
-        
-                // Convert DataBase to JSON; 
-        
-        System.out.println("CONVERSION RESULTS (DataBase to JSON)");
-        System.out.println("================================");
-
-        //String json = Converter.csvToJson(csvFileString);
-        JSONArray json = getJSONData();
-        System.out.println(json);
-        
+            if (pstUpdate != null) { try { pstUpdate.close(); pstUpdate = null; } catch (Exception e) {} }        
+        }       
+        return record; 
     }
 }
