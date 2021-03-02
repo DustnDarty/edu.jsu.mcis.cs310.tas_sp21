@@ -1,10 +1,14 @@
 package edu.jsu.mcis.cs310.tas_sp21;
 
-import java.util.GregorianCalendar;
+//import java.util.GregorianCalendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Punch {
     
-    private int id;
+    private int id; 
     private int terminalid;
     private String badgeid;
     private long originaltimestamp;
@@ -45,7 +49,11 @@ public class Punch {
     public String getAdjustmenttype() {
         return adjustmenttype;
     }
-
+    
+     public void setOriginalTimeStamp(long originaltimestamp) {
+        this.originaltimestamp = originaltimestamp;
+    }
+    
     public void setId(int id) {
         this.id = id;
     }
@@ -59,8 +67,10 @@ public class Punch {
     
     public String printOriginalTimestamp(){
         StringBuilder output = new StringBuilder();
-        GregorianCalendar time = new GregorianCalendar();
-        time.setTimeInMillis(originaltimestamp);
+        Date date = new Date(originaltimestamp);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
+        String strDate = formatter.format(date);
         
         if(punchtypeid==1){
             
@@ -79,20 +89,10 @@ public class Punch {
             output.append("#").append(badgeid).append(" ");
             output.append("TIMED OUT: ");
         }
-        
-        String day_of_week[] = {"SUN", "MON", "TUE","WED", "THU", "FRI", "SAT"};
-        
-        //REVIEW ONCE TAS DATABASE IS IMPLEMENTED
-        output.append(day_of_week[time.get(GregorianCalendar.DAY_OF_WEEK)]).append(" ");
-        output.append((time.get(GregorianCalendar.MONTH)+1)).append("/");
-        output.append((time.get(GregorianCalendar.DAY_OF_MONTH))).append("/");
-        output.append((time.get(GregorianCalendar.YEAR))).append(" ");
-        output.append((time.get(GregorianCalendar.HOUR_OF_DAY))).append(":");       
-        output.append((time.get(GregorianCalendar.MINUTE))).append(":");
-        output.append((time.get(GregorianCalendar.SECOND)));
-        
-        return output.toString();
  
-    }
+        output.append(strDate);
+            
+        return output.toString().toUpperCase();
+     }
   
 }
