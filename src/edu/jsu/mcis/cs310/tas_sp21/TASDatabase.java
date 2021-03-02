@@ -46,11 +46,49 @@ public class TASDatabase {
 	}
 		
 	public Punch getPunch(int id){ // method of the database class and provide the punch ID as a parameter. 
-            /*This method should then query the database, 
-            retrieve the punch data from the database, populate a new Punch object, 
-            and then return this object to the caller. */
-	
-            //Stubbed
+                //note: changed Punch to void for return type
+            Punch outputPunch;
+            
+            try{
+                
+                /*Prepare Select Query*/
+                query = "SELECT * FROM tas.punch WHERE id = " + id;
+                pstSelect = conn.prepareStatement(query);
+                
+                
+                /* Execute Select Query */
+                hasresults = pstSelect.execute();
+                
+                
+                while( hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if (hasresults) {
+                        
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                        
+                        id = resultset.getInt("id");
+                        int terminalid = resultset.getInt("terminalid");
+                        String badgeid = resultset.getString("badgeid");
+                        long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
+                        int punchtypeid = resultset.getInt("punchtypeid");
+                        
+                        System.out.println("id: " + id);
+                        System.out.println("terminalid: " + terminalid);
+                        System.out.println("badgeid: " + badgeid);
+                        System.out.println("originaltimestamp: " + originaltimestamp);
+                        System.out.println("punchtypeid: " + punchtypeid);
+                        
+                        outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
+                        outputPunch.setOriginalTimeStamp(originaltimestamp);
+
+                        return outputPunch;
+                        
+                    }
+                }   
+            }
+            catch(SQLException e){System.out.println(e);}
+            
+            //Shouldn't be reached with a valid punch id
             return null;
 	}
 	
@@ -70,7 +108,7 @@ public class TASDatabase {
                     if ( hasresults ) {
                         resultset = pstSelect.getResultSet();
                         
-                        resultset.next();
+                        resultset.next();                        
                         outputBadge = new Badge(resultset.getString("id"), resultset.getString("description"));
                         
                         return outputBadge;
