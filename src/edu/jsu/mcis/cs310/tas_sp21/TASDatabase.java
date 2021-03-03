@@ -66,17 +66,10 @@ public class TASDatabase {
                         resultset = pstSelect.getResultSet();
                         resultset.next();
                         
-                        id = resultset.getInt("id");
                         int terminalid = resultset.getInt("terminalid");
                         String badgeid = resultset.getString("badgeid");
                         long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
                         int punchtypeid = resultset.getInt("punchtypeid");
-                        
-                        System.out.println("id: " + id);
-                        System.out.println("terminalid: " + terminalid);
-                        System.out.println("badgeid: " + badgeid);
-                        System.out.println("originaltimestamp: " + originaltimestamp);
-                        System.out.println("punchtypeid: " + punchtypeid);
                         
                         outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
                         outputPunch.setOriginalTimeStamp(originaltimestamp);

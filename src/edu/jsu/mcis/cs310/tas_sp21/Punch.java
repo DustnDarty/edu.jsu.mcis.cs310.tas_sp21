@@ -72,27 +72,24 @@ public class Punch {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
         String strDate = formatter.format(date);
         
-        if(punchtypeid==1){
-            
-            output.append("#").append(badgeid).append(" ");
-            output.append("CLOCKED IN: ");
-        }
-        else if(punchtypeid==0)
-        {
-            
-            output.append("#").append(badgeid).append(" ");
-            output.append("CLOCKED OUT: ");
-        }
-        
-        else{
-           
-            output.append("#").append(badgeid).append(" ");
-            output.append("TIMED OUT: ");
+        switch (punchtypeid) {
+            case 1:
+                output.append("#").append(badgeid).append(" ");
+                output.append("CLOCKED IN: ");
+                break;
+            case 0:
+                output.append("#").append(badgeid).append(" ");
+                output.append("CLOCKED OUT: ");
+                break;
+            default:
+                output.append("#").append(badgeid).append(" ");
+                output.append("TIMED OUT: ");
+                break;
         }
  
-        output.append(strDate);
+        output.append(strDate.toUpperCase());
             
-        return output.toString().toUpperCase();
+        return output.toString();
      }
   
 }
