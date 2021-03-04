@@ -155,12 +155,34 @@ public class TASDatabase {
             return null;
 	}
 	
-	public Shift getShift(Badge badge){ // and one which accepts a Badge object as a parameter.
-            /* This way, the user can retrieve a shift ruleset by its database ID, 
-            or with the badge of an employee assigned to that shift.  
-            See the attached unit test code for an example of what the completed class interfaces should look like.*/
+	public Shift getShift(Badge badge){
+
+            try{
+               
+                // Prepare select query from employee table
+                query = "SELECT * FROM tas.employee WHERE badgeid = \"" + badge.getId() + "\"";
+                pstSelect = conn.prepareStatement(query);
+               
+                // Execute select query
+                hasresults = pstSelect.execute();
+               
+                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                       
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                        
+                        int shiftid = resultset.getInt("shiftid");
+                        
+                        return getShift(shiftid); 
+                    }
+                    
+                }
+                
+            }
+            catch(SQLException e){System.out.println(e);}
             
-            //Stubbed
+            //Shouldn't be reached with a valid badge.
             return null;
 	}
 }
