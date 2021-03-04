@@ -83,14 +83,16 @@ public class Shift {
     @Override
     public String toString() {
         
-        //REFERENCE: Shift ID: description: start time - stop time, 
+        //REFERENCE: description: start time - stop time, 
         //EXAMPLE1: "Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
         //EXAMPLE2: "Shift Early Lunch: 07:00 - 15:30 (510 minutes); Lunch: 11:30 - 12:00 (30 minutes)"
         StringBuilder s = new StringBuilder();
         
-        s.append("Shift ").append(id).append(": ").append(description).append(": ").append(start).append(" - ");
-        s.append(stop).append(" (").append(shiftDuration).append(" minutes); Lunch: ").append(lunchStart).append(" - ");
-        s.append(lunchStop).append(" (").append(lunchDuration).append(" minutes)");
+        s.append(description).append(": ");
+        s.append(start).append(" - ").append(stop);
+        s.append(" (").append(shiftDuration).append(" minutes);");
+        s.append(" Lunch: ").append(lunchStart).append(" - ").append(lunchStop);
+        s.append(" (").append(lunchDuration).append(" minutes)");
         
         return s.toString();
     }
