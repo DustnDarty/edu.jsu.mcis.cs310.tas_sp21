@@ -22,7 +22,7 @@ public class Badge {
         StringBuilder output = new StringBuilder();
         output.append("#").append(this.id).append(" ");
         output.append("(").append(this.description).append(")");
-        
+               
         return output.toString();
     }
 }
