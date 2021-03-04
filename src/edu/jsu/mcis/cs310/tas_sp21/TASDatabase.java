@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_sp21;
 import java.sql.*;
+import java.time.LocalTime;
 
 public class TASDatabase {
     
@@ -115,10 +116,42 @@ public class TASDatabase {
 	}
 	
 	public Shift getShift(int id){ // method of the database class and provide the shift ID as a parameter.
-            //Similarly, there should be " getBadge() " and " getShift() " methods for creating objects of the Badge and Shift classes.
-            //see getPunch
+            Shift outputShift;
+            try{
+               
+                // Prepare select query
+                query = "SELECT * FROM tas.shift WHERE id = " + id;
+                pstSelect = conn.prepareStatement(query);
+               
+                // Execute select query
+                hasresults = pstSelect.execute();
+               
+                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                       
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                       
+                        id = resultset.getInt("id");
+                        String description = resultset.getString("description");
+                        LocalTime start = LocalTime.parse(resultset.getString("start"));
+                        LocalTime stop = LocalTime.parse(resultset.getString("stop"));
+                        int interval = resultset.getInt("interval");
+                        int graceperiod = resultset.getInt("graceperiod");
+                        int dock = resultset.getInt("dock");
+                        LocalTime lunchstart = LocalTime.parse(resultset.getString("lunchstart"));
+                        LocalTime lunchstop = LocalTime.parse(resultset.getString("lunchstop"));
+                        int lunchdeduct = resultset.getInt("lunchdeduct");
+                       
+                        outputShift = new Shift(id, description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
+                       
+                        return outputShift;
+                    }
+                }
+            }
+            catch(SQLException e){System.out.println(e);}
             
-            //Stubbed
+            //Shouldn't be reached with a valid shift ID.
             return null;
 	}
 	
