@@ -117,6 +117,7 @@ public class TASDatabase {
 	
 	public Shift getShift(int id){ // method of the database class and provide the shift ID as a parameter.
             Shift outputShift;
+            
             try{
                
                 // Prepare select query
@@ -132,7 +133,6 @@ public class TASDatabase {
                         resultset = pstSelect.getResultSet();
                         resultset.next();
                        
-                        id = resultset.getInt("id");
                         String description = resultset.getString("description");
                         LocalTime start = LocalTime.parse(resultset.getString("start"));
                         LocalTime stop = LocalTime.parse(resultset.getString("stop"));
@@ -156,7 +156,6 @@ public class TASDatabase {
 	}
 	
 	public Shift getShift(Badge badge){
-
             try{
                
                 // Prepare select query from employee table
