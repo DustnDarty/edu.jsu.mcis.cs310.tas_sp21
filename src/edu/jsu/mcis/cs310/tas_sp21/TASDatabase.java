@@ -197,11 +197,12 @@ public class TASDatabase {
         // Extract punch data from the Punch object
         int terminalid = p.getTerminalid(); 
         String badgeid = p.getBadgeid();
+        long originalTS = p.getOriginaltimestamp();
         int punchtypeid = p.getPunchtypeid();
         
-        // Convert originaltimestamp to a Timestamp
+        // Convert originalTS to a Timestamp string
         GregorianCalendar ots = new GregorianCalendar();
-        ots.setTimeInMillis(p.getOriginaltimestamp());
+        ots.setTimeInMillis(originalTS);
         String originaltimestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
         
         // Insert this data into the database as a new punch
