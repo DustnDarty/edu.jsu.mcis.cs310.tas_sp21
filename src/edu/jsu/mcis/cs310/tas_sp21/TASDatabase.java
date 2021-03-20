@@ -240,65 +240,55 @@ public class TASDatabase {
         
         
         public ArrayList<Punch> getDailyPunchList(Badge badge, long ts) {
+            
             /* Initialize variables for punches */
+            Punch obj;                                                                  
             ArrayList<Punch> output = new ArrayList<>();
             String strbadge = badge.getId();
-            
-            /* Timestamp for start of day */
-            GregorianCalendar tsstart = new GregorianCalendar();
-            tsstart.setTimeInMillis(ts);
-            tsstart.set(Calendar.HOUR_OF_DAY, 0);
-            tsstart.set(Calendar.MINUTE, 0);
-            tsstart.set(Calendar.SECOND, 0);
-            tsstart.set(Calendar.MILLISECOND, 0);
-            
-            /* Timestamp for end of day */
-            GregorianCalendar tsstop = new GregorianCalendar();
-            tsstop.setTimeInMillis(ts);
-            tsstop.set(Calendar.HOUR_OF_DAY, 23);
-            tsstop.set(Calendar.MINUTE, 59);
-            tsstop.set(Calendar.SECOND, 59);
-            tsstop.set(Calendar.MILLISECOND, 999);
-            
+
+            /* Get search date for select query */
+            GregorianCalendar gc = new GregorianCalendar();                             
+            gc.setTimeInMillis(ts);                                                     
+            String date = (new SimpleDateFormat("yyyy-MM-dd")).format(gc.getTime());    
+
             try{
+
                 /* Prepare SQL query */
-                query = "SELECT *"
-                        + " FROM tas.punch"
-                        + " WHERE badgeid = ?"
-                        + " AND originaltimestamp BETWEEN ? AND ?"
-                        + " ORDER BY originaltimestamp";
+                query = "SELECT * FROM tas.punch WHERE badgeid = ? AND DATE(originaltimestamp) = ?";
                 pstSelect = conn.prepareStatement(query);
                 pstSelect.setString(1, strbadge);
-                pstSelect.setTimestamp(2, new Timestamp(tsstart.getTimeInMillis()));
-                pstSelect.setTimestamp(3, new Timestamp(tsstop.getTimeInMillis()));
-                
-                System.out.println(strbadge);
-                System.out.println(new Timestamp(tsstart.getTimeInMillis()));
-                System.out.println(new Timestamp(tsstop.getTimeInMillis()));
-                System.out.println();
+                pstSelect.setString(2, date);
                 
                 /* Execute query */
                 hasresults = pstSelect.execute();
-               
-                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                
+               while(hasresults || pstSelect.getUpdateCount() != -1 ){
                     if(hasresults){
-                       
-                        resultset = pstSelect.getResultSet();
-                        resultset.next();
                         
-                        int id = resultset.getInt("id");
-                        output.add(getPunch(id)); 
-                    }
-                    else{
-                        updateCount = pstSelect.getUpdateCount();
-                        if(updateCount == -1){
-                            break;
+                        resultset = pstSelect.getResultSet();
+                  
+                        while(resultset.next()){
+                            
+                            int terminalid = resultset.getInt("terminalid");
+                            int punchtypeid = resultset.getInt("punchtypeid");
+                            
+                            obj = new Punch(badge, terminalid, punchtypeid);
+                            obj.setOriginalTimeStamp(resultset.getTimestamp("originaltimestamp").getTime());
+                            
+                            output.add(obj);                             
                         }
-                    }
-                    hasresults = pstSelect.getMoreResults();
+
+                    } 
+                    else {
+                       updateCount = pstSelect.getUpdateCount();
+                       if(updateCount == -1){
+                           break;
+                        }
+                   }
+                    hasresults = pstSelect.getMoreResults();   
                 }
                 
-            }
+           }
             catch(SQLException e){ System.out.println(e); }
             
             return output;
