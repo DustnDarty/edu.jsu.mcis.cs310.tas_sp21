@@ -1,14 +1,20 @@
 package edu.jsu.mcis.cs310.tas_sp21;
 import java.sql.*;
 import java.time.LocalTime;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.ArrayList;
+
 
 public class TASDatabase {
     
         private Connection conn = null;
         private String query;
-        private PreparedStatement pstSelect = null;
+        private PreparedStatement pstSelect = null, pstUpdate = null;
         private ResultSet resultset = null;
         private boolean hasresults;
+        private int updateCount;
 
 	public TASDatabase(){
 		try {
@@ -47,7 +53,6 @@ public class TASDatabase {
 	}
 		
 	public Punch getPunch(int id){ // method of the database class and provide the punch ID as a parameter. 
-                //note: changed Punch to void for return type
             Punch outputPunch;
             
             try{
@@ -184,4 +189,109 @@ public class TASDatabase {
             //Shouldn't be reached with a valid badge.
             return null;
 	}
+        
+        public int insertPunch(Punch p){
+
+            // Extract punch data from the Punch object
+            int terminalid = p.getTerminalid(); 
+            String badgeid = p.getBadgeid();
+            long originalTS = p.getOriginaltimestamp();
+            int punchtypeid = p.getPunchtypeid();
+        
+            // Convert originalTS to a Timestamp string
+            GregorianCalendar ots = new GregorianCalendar();
+            ots.setTimeInMillis(originalTS);
+            String originaltimestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+        
+            // Insert this data into the database as a new punch
+            try {
+                // Prepare Update Query
+                
+                query = "INSERT INTO tas.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)";
+                pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                pstUpdate.setInt(1, terminalid);
+                pstUpdate.setString(2, badgeid);
+                pstUpdate.setString(3, originaltimestamp);
+                pstUpdate.setInt(4, punchtypeid);
+                
+                // Execute Update Query
+                updateCount = pstUpdate.executeUpdate();
+                
+                // Get New Key
+                if(updateCount > 0){
+                    
+                    resultset = pstUpdate.getGeneratedKeys();
+                    
+                    if (resultset.next()) {
+                        
+                        // Return the id of the new punch (assigned by the database) as an integer
+                        
+                        return resultset.getInt(1);
+                        
+                    }
+                }
+  
+            }
+            catch(SQLException e){ System.out.println(e); }
+
+            // Not reached with a valid Punch object
+            return -1; 
+    }
+        
+        
+        public ArrayList<Punch> getDailyPunchList(Badge badge, long ts) {
+            
+            /* Initialize variables for punches */
+            Punch obj;                                                                  
+            ArrayList<Punch> output = new ArrayList<>();
+            String strbadge = badge.getId();
+
+            /* Get search date for select query */
+            GregorianCalendar gc = new GregorianCalendar();                             
+            gc.setTimeInMillis(ts);                                                     
+            String date = (new SimpleDateFormat("yyyy-MM-dd")).format(gc.getTime());    
+
+            try{
+
+                /* Prepare SQL query */
+                query = "SELECT * FROM tas.punch WHERE badgeid = ? AND DATE(originaltimestamp) = ?";
+                pstSelect = conn.prepareStatement(query);
+                pstSelect.setString(1, strbadge);
+                pstSelect.setString(2, date);
+                
+                /* Execute query */
+                hasresults = pstSelect.execute();
+                
+               while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                        
+                        resultset = pstSelect.getResultSet();
+                  
+                        while(resultset.next()){
+                            
+                            int terminalid = resultset.getInt("terminalid");
+                            int punchtypeid = resultset.getInt("punchtypeid");
+                            
+                            obj = new Punch(badge, terminalid, punchtypeid);
+                            obj.setOriginalTimeStamp(resultset.getTimestamp("originaltimestamp").getTime());
+                            
+                            output.add(obj);                             
+                        }
+
+                    } 
+                    else {
+                       updateCount = pstSelect.getUpdateCount();
+                       if(updateCount == -1){
+                           break;
+                        }
+                   }
+                    hasresults = pstSelect.getMoreResults();   
+                }
+                
+           }
+            catch(SQLException e){ System.out.println(e); }
+            
+            return output;
+        }
+        
 }
