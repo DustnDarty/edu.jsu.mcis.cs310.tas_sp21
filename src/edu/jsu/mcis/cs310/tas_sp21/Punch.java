@@ -120,7 +120,6 @@ public class Punch {
                     else if (lt.isAfter(s.getLunchStart())  &&  lt.isBefore(s.getLunchStop())){
                         adjustedtimestamp = originaltimestamp - 1000 * Math.abs(lt.toSecondOfDay() - s.getLunchStart().toSecondOfDay()); 
                         adjustmenttype = "Lunch Start";
-                        System.err.println("In Lunch Start (should not include SAT!!): " + strDate);
                     }  
                     // EARLY CLOCK-OUT - GRACE PERIOD - 5 min (EARLY CLOCK OUT punch within GRACE PERIOD before END of shift is realigned with the STOPPING time of the shift)
                     else if (lt.isBefore(s.getStop()) && lt.isAfter(s.getLunchStop()) && (Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay()))  <= s.getGracePeriod() * 60){
