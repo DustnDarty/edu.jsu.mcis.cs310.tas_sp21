@@ -68,7 +68,7 @@ public class Feature3 {
         assertEquals("#F1EE0555 CLOCKED IN: SAT 08/11/2018 06:00:00 (Interval Round)", p1.printAdjustedTimestamp());
         
         assertEquals("#F1EE0555 CLOCKED OUT: SAT 08/11/2018 12:04:02", p2.printOriginalTimestamp());
-        assertEquals("#F1EE0555 CLOCKED OUT: SAT 08/11/2018 12:00:00 (Interval Round)", p2.printAdjustedTimestamp());       //FAILS: getting lunch start
+        assertEquals("#F1EE0555 CLOCKED OUT: SAT 08/11/2018 12:00:00 (Interval Round)", p2.printAdjustedTimestamp());       
         
     }
     
@@ -153,7 +153,7 @@ public class Feature3 {
         assertEquals("#BE51FA92 CLOCKED IN: WED 08/01/2018 07:00:00 (Shift Start)", p1.printAdjustedTimestamp());
         
         assertEquals("#3DA8B226 CLOCKED IN: FRI 08/24/2018 07:02:23", p2.printOriginalTimestamp()); 
-        assertEquals("#3DA8B226 CLOCKED IN: FRI 08/24/2018 07:00:00 (Shift Grace)", p2.printAdjustedTimestamp());       //changed from shift start to shift grace 
+        assertEquals("#3DA8B226 CLOCKED IN: FRI 08/24/2018 07:00:00 (Shift Start)", p2.printAdjustedTimestamp());      
 
         assertEquals("#8E5F0240 CLOCKED IN: MON 08/27/2018 07:08:57", p3.printOriginalTimestamp());
         assertEquals("#8E5F0240 CLOCKED IN: MON 08/27/2018 07:15:00 (Shift Dock)", p3.printAdjustedTimestamp());
@@ -162,7 +162,7 @@ public class Feature3 {
         assertEquals("#D2C39273 CLOCKED OUT: MON 09/10/2018 15:15:00 (Interval Round)", p4.printAdjustedTimestamp());
 
         assertEquals("#408B195F CLOCKED OUT: TUE 08/21/2018 15:28:13", p5.printOriginalTimestamp());                 
-        assertEquals("#408B195F CLOCKED OUT: TUE 08/21/2018 15:30:00 (Shift Grace)", p5.printAdjustedTimestamp());     //changed from shift stop to shift grace
+        assertEquals("#408B195F CLOCKED OUT: TUE 08/21/2018 15:30:00 (Shift Stop)", p5.printAdjustedTimestamp());     
 
         assertEquals("#1B2052DE CLOCKED OUT: TUE 08/14/2018 15:15:00", p6.printOriginalTimestamp());
         assertEquals("#1B2052DE CLOCKED OUT: TUE 08/14/2018 15:15:00 (Shift Dock)", p6.printAdjustedTimestamp());
