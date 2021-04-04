@@ -124,7 +124,7 @@ public class Punch {
                     // EARLY CLOCK-OUT - GRACE PERIOD - 5 min (EARLY CLOCK OUT punch within GRACE PERIOD before END of shift is realigned with the STOPPING time of the shift)
                     else if (lt.isBefore(s.getStop()) && lt.isAfter(s.getLunchStop()) && (Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay()))  <= s.getGracePeriod() * 60){
                         adjustedtimestamp = originaltimestamp + 1000 * Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay()); 
-                        adjustmenttype = "Shift Grace";
+                        adjustmenttype = "Shift Stop";
                     }
                     // DOCK 15 min (CLOCK OUT too early to fall within grace period; adjust punch BACKWARD in time from end of shift
                     else if( lt.isBefore(s.getStop()) && lt.isAfter(s.getLunchStop()) && (Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay())) > s.getGracePeriod() * 60 && (Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay()) <= s.getDock() * 60) )
@@ -165,7 +165,7 @@ public class Punch {
                     // LATE CLOCK IN - GRACE PERIOD - 5 min (LATE CLOCK IN within grace period AFTER start of shift realigns with STARTING time of the shift)
                     else if ( lt.isAfter(s.getStart()) && lt.isBefore(s.getLunchStart()) && ((Math.abs( lt.toSecondOfDay() - s.getStart().toSecondOfDay())  <= s.getGracePeriod() * 60))){
                        adjustedtimestamp = originaltimestamp - 1000 * Math.abs(lt.toSecondOfDay() - s.getStart().toSecondOfDay()); 
-                       adjustmenttype = "Shift Grace";
+                       adjustmenttype = "Shift Start";
                     }
                     // DOCK 15 min (CLOCK IN too late to fall within grace period; adjust punch FORWARD in time from start of shift)
                     else if((lt.isAfter(s.getStart())) && (lt.isBefore(s.getLunchStart())) && (Math.abs(lt.toSecondOfDay() - s.getStart().toSecondOfDay())) > s.getGracePeriod() * 60 && (Math.abs(s.getStart().toSecondOfDay() - lt.toSecondOfDay()) <= s.getDock() * 60)){
@@ -195,7 +195,7 @@ public class Punch {
     }
      
     //helper method for INTERVAL ROUNDING
-    private void intervalRound(LocalTime lt, Shift s){ // THE MATH IS CORRECT 
+    private void intervalRound(LocalTime lt, Shift s){ 
         /* Round up or down to nearest increment of the interval */
         long mod =  lt.getMinute() % s.getInterval();
         int halfInterval = s.getInterval()/2;
