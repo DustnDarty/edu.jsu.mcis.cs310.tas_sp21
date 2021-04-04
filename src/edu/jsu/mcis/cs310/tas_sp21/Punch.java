@@ -110,7 +110,7 @@ public class Punch {
             /************************* PUNCH OUT *************************/
             case 0: 
                 // On Weekdays
-                if(strDate != "SAT" && strDate != "SUN" ){
+                if(!"SAT".equals(strDate) && !"SUN".equals(strDate) ){
                     //LATE CLOCK-OUT: SHIFT STOP within 15-min interval (ADJUST LATE CLOCK-OUT BACKWARD TO THE SCHEDULED END OF THE SHIFT)
                     if ( lt.isAfter(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - lt.toSecondOfDay()) <= s.getInterval() * 60)){
                         adjustedtimestamp = originaltimestamp - 1000 * Math.abs(lt.toSecondOfDay() - (s.getStop().toSecondOfDay())); 
@@ -144,7 +144,7 @@ public class Punch {
                     }
                 }
                 // WEEKEND REQUIRES ONLY INTERVAL ROUNDING
-                else if ( strDate == "SAT" || strDate == "SUN" ){
+                else if ( "SAT".equals(strDate) || "SUN".equals(strDate) ){
                      intervalRound(lt, s);
                 }
                 break;
@@ -152,7 +152,7 @@ public class Punch {
             /************************* PUNCH IN *************************/
             case 1: 
                 // On Weekdays
-                if( strDate != "SAT" && strDate != "SUN" ){
+                if( !"SAT".equals(strDate) && !"SUN".equals(strDate) ){
                      // EARLY CLOCK IN - SHIFT START -  15 min interval (adjust EARLY clock-in FORWARD)
                     if ( lt.isBefore(s.getStart()) && (Math.abs(s.getStart().toSecondOfDay() - lt.toSecondOfDay())  <= s.getInterval() * 60)){
                        adjustedtimestamp = originaltimestamp + 1000 * Math.abs(s.getStart().toSecondOfDay() - lt.toSecondOfDay());
@@ -184,7 +184,7 @@ public class Punch {
                     }            
                 }                
                 // WEEKEND REQUIRES ONLY INTERVAL ROUNDING
-                else if( strDate == "SAT" || strDate == "SUN" ){
+                else if( "SAT".equals(strDate) || "SUN".equals(strDate) ){
                      intervalRound(lt, s);
                 }              
                 break;                
