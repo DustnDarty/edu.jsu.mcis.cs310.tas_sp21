@@ -9,7 +9,7 @@ package edu.jsu.mcis.cs310.tas_sp21;
  *
  * @author dustn
  */
-public class TAS_SP21 {
+public class TASLogic {
 
     /**
      * @param args the command line arguments
