@@ -45,6 +45,10 @@ public class Punch {
     public long getOriginaltimestamp() {
         return originaltimestamp;
     }
+    
+    public long getAdjustedtimestamp() {
+        return adjustedtimestamp;
+    }
 
     public int getPunchtypeid() {
         return punchtypeid;
@@ -65,12 +69,16 @@ public class Punch {
     public void setAdjustmenttype(String adjustmenttype) {
         this.adjustmenttype = adjustmenttype;
     }
-    
-    
  
-    public String printOriginalTimestamp(){
+    public String printTimestamp(Boolean adjustedTimestamp){
         StringBuilder output = new StringBuilder();
-        Date date = new Date(originaltimestamp);
+        Date date;
+        if(adjustedTimestamp){
+            date = new Date(adjustedtimestamp);
+        }
+        else{
+            date = new Date(originaltimestamp);
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
         String strDate = formatter.format(date);
@@ -94,6 +102,14 @@ public class Punch {
             
         return output.toString();
      }
+    
+    public String printOriginalTimestamp(){
+        return printTimestamp(false);
+    }
+    
+    public String printAdjustedTimestamp(){
+        return printTimestamp(true);
+    }
   
     public void adjust(Shift s){
         
@@ -189,7 +205,7 @@ public class Punch {
                 break;                
             /************************* TIME OUT *************************/
             default: 
-                System.err.println("DISREGARD FOR NOW; SEE FEATURE 4");
+                // Not implemented, see feature 4 description
                 break;
         }                
     }
@@ -210,32 +226,4 @@ public class Punch {
             adjustmenttype = "Interval Round";   
         }
     }
-        
-    public String printAdjustedTimestamp(){
-        StringBuilder output = new StringBuilder();
-        Date date = new Date(adjustedtimestamp);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
-        String strDate = formatter.format(date);
-        
-        switch (punchtypeid) {
-            case 1:
-                output.append("#").append(badgeid).append(" ");
-                output.append("CLOCKED IN: ");
-                break;
-            case 0:
-                output.append("#").append(badgeid).append(" ");
-                output.append("CLOCKED OUT: ");
-                break;
-            default:
-                output.append("#").append(badgeid).append(" ");
-                output.append("TIMED OUT: ");
-                break;
-        }
- 
-        output.append(strDate.toUpperCase()).append(" ").append("(").append(adjustmenttype).append(")");
-            
-        return output.toString();
-    }
-   
 }
