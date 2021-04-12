@@ -99,6 +99,10 @@ public class Punch {
         }
  
         output.append(strDate.toUpperCase());
+        
+        if(adjustedTimestamp){
+            output.append(" ").append("(").append(adjustmenttype).append(")");
+        }
             
         return output.toString();
      }
