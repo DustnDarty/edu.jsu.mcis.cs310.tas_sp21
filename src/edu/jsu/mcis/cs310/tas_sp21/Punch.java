@@ -54,6 +54,10 @@ public class Punch {
         return adjustmenttype;
     }
     
+    public long getAdjustedTimestamp(){
+        return adjustedtimestamp;
+    }
+    
      public void setOriginalTimeStamp(long originaltimestamp) {
         this.originaltimestamp = originaltimestamp;
     }
