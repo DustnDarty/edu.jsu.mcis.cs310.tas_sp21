@@ -273,6 +273,7 @@ public class TASDatabase {
                             int punchtypeid = resultset.getInt("punchtypeid");
                             
                             obj = new Punch(badge, terminalid, punchtypeid);
+                            obj.setId(resultset.getInt("id"));
                             obj.setOriginalTimeStamp(resultset.getTimestamp("originaltimestamp").getTime());
                             
                             output.add(obj);                             
