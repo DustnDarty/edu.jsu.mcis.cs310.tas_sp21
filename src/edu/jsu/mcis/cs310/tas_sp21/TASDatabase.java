@@ -295,4 +295,99 @@ public class TASDatabase {
             return output;
         }
         
+        public ArrayList<Punch> getPayPeriodPunchList(Badge badge, long timestamp){
+           ArrayList<Punch> punches = new ArrayList<>();
+           GregorianCalendar ts = new GregorianCalendar();
+           ts.setTimeInMillis(timestamp);
+           ts.set(Calendar.DAY_OF_WEEK, 1);
+           ts.set(Calendar.HOUR_OF_DAY, 0);
+           ts.set(Calendar.MINUTE, 0);
+           ts.set(Calendar.SECOND, 0); 
+           
+           for(int i = 1; i <= 7; i++){
+               ts.set(Calendar.DAY_OF_WEEK, i);
+               punches.addAll(getDailyPunchList(badge, ts.getTimeInMillis()));
+           }
+           
+           return punches;
+        }
+        
+        public Absenteeism getAbsenteeism(String badgeid, long payperiod){
+            Absenteeism outputAbsenteeism;
+            
+            // Convert originalTS to a Timestamp string
+            GregorianCalendar ots = new GregorianCalendar();
+            ots.setTimeInMillis(payperiod);
+            String payperiodStr = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+            
+            try{
+               
+                // Prepare select query
+                query = "SELECT * FROM tas.absenteeism WHERE badgeid = ? AND payperiod = ?";
+                pstSelect = conn.prepareStatement(query);
+                pstSelect.setString(1, badgeid);
+                pstSelect.setString(2, payperiodStr);
+               
+                // Execute select query
+                hasresults = pstSelect.execute();
+               
+                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                       
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                        
+                        String absBadge = resultset.getString("badgeid");
+                        long absPayperiod = resultset.getTimestamp("payperiod").getTime();
+                        double absPercentage = resultset.getDouble("percentage");
+                       
+                        outputAbsenteeism = new Absenteeism(absBadge, absPayperiod, absPercentage);
+                       
+                        return outputAbsenteeism;
+                    }
+                }
+            }
+            catch(SQLException e){System.out.println(e);}
+            
+            //Shouldn't be reached with a valid badge string and payperiod timestamp.
+            return null;
+        }
+        
+        public void insertAbsenteeism(Absenteeism absenteeism){
+            // Convert originalTS to a Timestamp string
+            GregorianCalendar ots = new GregorianCalendar();
+            ots.setTimeInMillis(absenteeism.getPayperiod());
+            String payperiod = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+            
+            if(getAbsenteeism(absenteeism.getBadgeid(), absenteeism.getPayperiod()) != null){
+                try {
+                    // Prepare Update Query
+                    
+                    query = "UPDATE tas.absenteeism SET percentage = ? WHERE badgeid = ? AND payperiod = ?";
+                    pstUpdate = conn.prepareStatement(query);
+                    pstUpdate.setDouble(1, absenteeism.getPercentage());
+                    pstUpdate.setString(2, absenteeism.getBadgeid());
+                    pstUpdate.setString(3, payperiod);
+                    
+                    // Execute Update Query
+                    updateCount = pstUpdate.executeUpdate();
+                }
+                catch(SQLException e){ System.out.println(e); }
+            }
+            else {
+                try {
+                    // Prepare Update Query
+                    
+                    query = "INSERT INTO tas.absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
+                    pstUpdate = conn.prepareStatement(query);
+                    pstUpdate.setString(1, absenteeism.getBadgeid());
+                    pstUpdate.setString(2, payperiod);
+                    pstUpdate.setDouble(3, absenteeism.getPercentage());
+                    
+                    // Execute Update Query
+                    updateCount = pstUpdate.executeUpdate();
+                }
+                catch(SQLException e){ System.out.println(e); }
+            }
+        }
 }
