@@ -76,11 +76,18 @@ public class TASLogic {
         return json;
     }
     
-    private static double calculateAbsenteeism(ArrayList<Punch> punchlist, Shift shift){
+    public static double calculateAbsenteeism(ArrayList<Punch> punchlist, Shift shift){
+        long totalScheduledMinutes = shift.getShiftDuration() * 5;
+        long totalMinutes = calculateTotalMinutes(punchlist, shift);
+        double absenteeism;
+        if(totalMinutes > totalScheduledMinutes){
+            absenteeism = totalScheduledMinutes / totalMinutes;
+            absenteeism = -absenteeism;
+        }
+        else {
+            absenteeism = totalMinutes / totalScheduledMinutes;
+        }
         
-        long totalScheduledMinutes = MINUTES.between(shift.getStart(), shift.getStop());
-        int totalMinutes = calculateTotalMinutes(punchlist, shift);
-        double absenteeism = totalMinutes / totalScheduledMinutes;
         return absenteeism;
     }
     

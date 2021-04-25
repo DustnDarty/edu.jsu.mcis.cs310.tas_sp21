@@ -72,12 +72,12 @@ public class Absenteeism {
         StringBuilder s = new StringBuilder();
         
         Date date = new Date (this.payperiod);
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-DD-YYYY");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         String startOfPayperiod = formatter.format(date);
         
         // Example output: "#28DC3FB8 (Pay Period Starting 09-02-2018): 2.50%"
         s.append("#").append(this.badgeid).append(" (Pay Period Starting ").append(startOfPayperiod).append("): ");
-        s.append(String.format("%6.2f%%", this.percentage));
+        s.append(String.format("%.2f%%", this.percentage));
         
         return s.toString();
     }  
