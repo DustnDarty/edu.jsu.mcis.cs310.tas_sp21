@@ -75,4 +75,13 @@ public class TASLogic {
         String json = JSONValue.toJSONString(jsonData);
         return json;
     }
+    
+    private static double calculateAbsenteeism(ArrayList<Punch> punchlist, Shift shift){
+        
+        long totalScheduledMinutes = MINUTES.between(shift.getStart(), shift.getStop());
+        int totalMinutes = calculateTotalMinutes(punchlist, shift);
+        double absenteeism = totalMinutes / totalScheduledMinutes;
+        return absenteeism;
+    }
+    
 }

@@ -66,7 +66,7 @@ public class Absenteeism {
         this.percentage = percentage;
     }
 
-   
+       
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
